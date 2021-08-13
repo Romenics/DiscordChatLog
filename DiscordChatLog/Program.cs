@@ -17,7 +17,7 @@ namespace DiscordChatLog {
 
 		public static int PartyCount;
 		public static string LastDeletedMessage;
-		//Загружается из файла Token.txt
+		//File loading from Token.txt
 		public static string DiscordToken;
 
 		
@@ -29,7 +29,7 @@ namespace DiscordChatLog {
 
 		static async Task MainAsync (string[] args) {
 			
-			//Настройка базовой конфигурации бота
+			// Base configuration bot
 			DiscordConfiguration DiscordConfig = new DiscordConfiguration {
 				Token = DiscordToken,
 				TokenType = TokenType.Bot,
@@ -39,7 +39,7 @@ namespace DiscordChatLog {
 			
 			discord = new DiscordClient (DiscordConfig);
 
-			//Настройка списка комманд
+			// Setting up command list
 			CommandsNextConfiguration commandsConfig = new CommandsNextConfiguration {
 				StringPrefix = "!!",
 				EnableMentionPrefix = true,
@@ -55,14 +55,14 @@ namespace DiscordChatLog {
 			await Task.Delay(-1);
 		}
 
+
 		/// <summary>
-		/// Выдает содержимое каждой строки txt файла который лежит в корне Unity проекта (рядом с Assets)
-		/// Имя файла например Test (без расширения)
+		/// Load each line from txt file wich located in project root
+		/// File name example: Test (without extantion)
 		/// </summary>
 		public static string[] ReadTxtLines (string FileName) {
 
 			string Path = @"./" + FileName + ".txt";
-
 
 			if (File.Exists (Path) == false) {
 				return new string[0];
@@ -73,12 +73,13 @@ namespace DiscordChatLog {
 		}
 
 
-		/// Выдает содержимое txt файла который лежит в корне Unity проекта (рядом с Assets)
-		/// Имя файла например Test.txt
+		/// <summary>
+		/// Load all lines in one string from txt file wich located in project root
+		/// File name example: Test (without extantion)
+		/// </summary>
 		public static string ReadTxt (string FileName) {
 
 			string Path = @"./" + FileName;
-
 
 			if (File.Exists (Path) == false) {
 				return string.Empty;

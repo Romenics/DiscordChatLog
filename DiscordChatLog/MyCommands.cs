@@ -11,25 +11,6 @@ using DSharpPlus.Entities;
 namespace DiscordChatLog {
 	public class MyCommands {
 
-		public static List <Character> Characters = new List<Character>();
-
-		public static List <string> Sacraments = new List<string> ();
-
-		public class Character {
-
-			public string Name;
-
-			public int[] Stats = new int[8];
-			public int Endurance;
-			public int Agility;
-			public int Sense;
-			public int Intelligence;
-			public int Will;
-			public int Charm;
-			public int Luck;
-		}
-
-
 		[Command ("ping")]
 		public async Task Ping (CommandContext context) {
 
@@ -45,65 +26,65 @@ namespace DiscordChatLog {
 					await mess.DeleteAsync();
 				}
 			}
-
 			await context.Message.DeleteAsync();
-
 		}
+
 
 		[Command ("invite")]
 		public async Task Invite (CommandContext context) {
 			await context.RespondAsync ("https://discordapp.com/oauth2/authorize?client_id=642738745526714389&scope=bot&permissions=8");
 		}
 
+
 		[Command ("Save")]
 		public async Task Save (CommandContext context) {
 
 			await context.RespondAsync ("Request to save all message from " + context.Channel.Name);
 
-			// Записываем данные самого нового сообщения
+			// Write data of first message
 			string ChatLog = context.Message.Content;
 			ulong LastMessage = context.Message.Id;
 
-			// Счетчик сообщений и итераций
+			// Message and iteractions counter
 			int Iterations = 0;
 			ulong TotalMessages = 0;
 
-			// Пока есть сообщения, эта переменная false
+			// Until not saved this value false
 			bool AllSaved = false;
 
-			// Проверяем наличие папки
+			// Check folder exist
 			if (Directory.Exists ("./Logs") == false) {
 				Directory.CreateDirectory ("./Logs");
 			}
 
 			string time = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day;
 			Console.WriteLine (time);
-			//Создаем файл с названием канала
+			// Create folder with channel name
 			StreamWriter streamWriter = new StreamWriter ("./Logs/" + context.Channel.Name + "-" + time + ".csv", true, System.Text.Encoding.Unicode);
 
 			while (AllSaved != true) {
-				// Начало новой итерации
+				// Start new iteration
 				Iterations ++;
 
-				// Получаем новые 100 сообщений вниз, от последнего
+				// Gather new 100 messages and go down from last one
 				IReadOnlyList<DiscordMessage> AllMessage = await context.Channel.GetMessagesAsync (100, LastMessage);
 
-				// Сохраняем все сообщения
+				// Saving all message
 				for (int i = 0; i < AllMessage.Count; i++) {
 					ChatLog += AllMessage[i].CreationTimestamp.DateTime.ToString () + ";" + AllMessage[i].Id + ";" + AllMessage[i].Author.Username + ";" + AllMessage[i].Content + "\n";
 					TotalMessages ++;
 				}
-				// Записываем ID последнего сообщения, чтобы начать отсчет с него в следующей итерации
+				// Record ID of last message, for next iteration
 				LastMessage = AllMessage[AllMessage.Count - 1].Id;
 
-				// Если сообщений меньше 100, то значит эта итерации последняя
+				// If message count low then 100, then this iteration last
 				if (AllMessage.Count < 100) {
 					AllSaved = true;
 				}
 				streamWriter.WriteLine (ChatLog);
 				ChatLog = string.Empty;
 
-				// Итоги итерации
+				// Iteration result
 				Console.WriteLine ("Iterations: " + Iterations + ", Total messages: " + TotalMessages);
 			}
 
